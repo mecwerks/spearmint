@@ -3164,6 +3164,8 @@ void CL_Frame ( int msec ) {
 	CL_UpdateMumble();
 #endif
 
+	CL_DiscordUpdate();
+
 	cls.framecount++;
 }
 

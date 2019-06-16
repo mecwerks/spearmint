@@ -270,6 +270,7 @@ TOMSFASTMATHSRCDIR=$(AUTOUPDATERSRCDIR)/rsa_tools/tomsfastmath-0.13.1
 NSISDIR=misc/nsis
 SDLHDIR=$(MOUNT_DIR)/SDL2
 LIBSDIR=$(MOUNT_DIR)/libs
+DISCDIR=$(MOUNT_DIR)/discord-rpc
 
 bin_path=$(shell which $(1) 2> /dev/null)
 
@@ -684,7 +685,8 @@ ifdef MINGW
   RENDERER_LIBS += -lmingw32
 
   ifeq ($(USE_LOCAL_HEADERS),1)
-    CLIENT_CFLAGS += -I$(SDLHDIR)/include
+    CLIENT_CFLAGS += -I$(SDLHDIR)/include \
+                      -I$(DISCDIR)/include
     ifeq ($(ARCH),x86)
     CLIENT_LIBS += $(LIBSDIR)/win32/libSDL2main.a \
                       $(LIBSDIR)/win32/libSDL2.dll.a
@@ -694,11 +696,14 @@ ifdef MINGW
     CLIENT_EXTRA_FILES += $(LIBSDIR)/win32/SDL2.dll
     else
     CLIENT_LIBS += $(LIBSDIR)/win64/libSDL264main.a \
-                      $(LIBSDIR)/win64/libSDL264.dll.a
+                      $(LIBSDIR)/win64/libSDL264.dll.a \
+                      $(LIBSDIR)/win64/discord-rpc.lib
+
     RENDERER_LIBS += $(LIBSDIR)/win64/libSDL264main.a \
                       $(LIBSDIR)/win64/libSDL264.dll.a
     SDLDLL=SDL264.dll
-    CLIENT_EXTRA_FILES += $(LIBSDIR)/win64/SDL264.dll
+    CLIENT_EXTRA_FILES += $(LIBSDIR)/win64/SDL264.dll \
+                      $(LIBSDIR)/win64/discord-rpc.dll
     endif
   else
     CLIENT_CFLAGS += $(SDL_CFLAGS)
@@ -1432,6 +1437,7 @@ Q3OBJ = \
   $(B)/client/cl_cgame.o \
   $(B)/client/cl_cin.o \
   $(B)/client/cl_console.o \
+  $(B)/client/cl_discord.o \
   $(B)/client/cl_input.o \
   $(B)/client/cl_joystick.o \
   $(B)/client/cl_keys.o \

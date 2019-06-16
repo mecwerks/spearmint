@@ -34,6 +34,7 @@ Suite 120, Rockville, Maryland 20850 USA.
 #include "../renderercommon/tr_public.h"
 #include "keys.h"
 #include "snd_public.h"
+#include "cl_discord.h"
 #include "../cgame/cg_public.h"
 
 #ifdef USE_CURL
@@ -47,7 +48,7 @@ Suite 120, Rockville, Maryland 20850 USA.
 // Lower this define to change max supported local clients for client/renderer,
 // cgame gets max from client when it's initialized.
 #ifndef CL_MAX_SPLITVIEW
-#define CL_MAX_SPLITVIEW MAX_SPLITVIEW
+#define CL_MAX_SPLITVIEW 1// MAX_SPLITVIEW
 #endif
 
 // file full of random crap that gets used to create cl_guid

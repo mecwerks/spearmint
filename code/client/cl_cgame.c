@@ -1136,6 +1136,8 @@ CL_ShutdonwCGame
 ====================
 */
 void CL_ShutdownCGame( void ) {
+	CL_DiscordShutdown();
+
 	Key_SetRepeat( qfalse );
 	Mouse_ClearStates();
 	cls.cgameStarted = qfalse;
@@ -1741,6 +1743,20 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 		re.GetShaderName( args[1], VMA(2), args[3] );
 		return 0;
 
+	// discord
+	case CG_DISCORD_INIT:
+		CL_DiscordInit();
+		return 0;
+	case CG_DISCORD_UPDATE:
+		CL_DiscordUpdatePresence(args[1], VMA(2), VMA(3), args[4], args[5], args[6]);
+		return 0;
+	case CG_DISCORD_CLEAR:
+		CL_DiscordClearPresence();
+		return 0;
+	case CG_DISCORD_SHUTDOWN:
+		CL_DiscordShutdown();
+		return 0;
+
 	default:
 	        assert(0);
 		Com_Error( ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0] );
@@ -1767,6 +1783,9 @@ void CL_InitCGame( void ) {
 	int					major, minor;
 
 	t1 = Sys_Milliseconds();
+
+	CL_DiscordShutdown(); // make sure its closed
+	CL_DiscordInit();
 
 	// load the dll or bytecode
 	cgvm = VM_Create( VM_PREFIX "cgame", CL_CgameSystemCalls, Cvar_VariableValue( "vm_cgame" ),

@@ -4,6 +4,7 @@ Makefile.local
 *tags
 *~
 misc/code_blocks/*.layout
+.vscode
 
 # OS X
 ####################
