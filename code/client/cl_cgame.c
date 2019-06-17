@@ -1744,17 +1744,11 @@ intptr_t CL_CgameSystemCalls( intptr_t *args ) {
 		return 0;
 
 	// discord
-	case CG_DISCORD_INIT:
-		CL_DiscordInit();
-		return 0;
 	case CG_DISCORD_UPDATE:
-		CL_DiscordUpdatePresence(args[1], VMA(2), VMA(3), args[4], args[5], args[6]);
+		CL_DiscordUpdatePresence(VMA(1), VMA(2), VMA(3), VMA(4), VMA(5), VMA(6), args[7], args[8], args[9]);
 		return 0;
 	case CG_DISCORD_CLEAR:
 		CL_DiscordClearPresence();
-		return 0;
-	case CG_DISCORD_SHUTDOWN:
-		CL_DiscordShutdown();
 		return 0;
 
 	default:

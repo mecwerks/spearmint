@@ -1,6 +1,5 @@
 #define DISCORD_DYNAMIC_LIB
 
-#include "discord_rpc.h"
 #include "client.h"
 
 static void handleDiscordReady(const DiscordUser *connectedUser)
@@ -24,7 +23,7 @@ static void handleDiscordError(int errcode, const char* message)
 static void handleDiscordJoin(const char* secret)
 {
     Com_Printf("Discord: join (%s)\n", secret);
-    Cbuf_ExecuteTextSafe(EXEC_APPEND, secret);
+    Cbuf_ExecuteTextSafe(EXEC_APPEND, va("connect %s", secret));
 }
 
 static void handleDiscordSpectate(const char* secret)
@@ -44,6 +43,8 @@ static void handleDiscordJoinRequest(const DiscordUser* request)
 
 int running = 0;
 
+int64_t startTime = 0;
+
 void CL_DiscordInit(void)
 {
     Com_Printf("Discord: Initializing\n");
@@ -57,35 +58,38 @@ void CL_DiscordInit(void)
     handlers.joinRequest = handleDiscordJoinRequest;
     Discord_Initialize(APPLICATION_ID, &handlers, 1, NULL);
     running = 1;
+    startTime = Sys_Epoch();
 }
 
-static const char *gameStateStrings[] = {
-    "Main Menu",
-	"Loading",
-    "Singleplayer",
-    "Multiplayer"
-};
-
-void CL_DiscordUpdatePresence(gamestateDiscord_t gameState, const char *mapname, const char *gametype, int numPlayers, int maxPlayers, int startTime)
-{ 
+void CL_DiscordUpdatePresence(const char *state, const char *details, const char *largeImageKey, const char *largeImageText,
+                                const char *smallImageKey, const char *smallImageText, int partySize, int partyMax, int startTimestamp)
+{    
     if (running == 0)
         return;
 
-    Com_Printf("Discord: Updating %d %s %s %d %d %d\n", gameState, mapname, gametype, numPlayers, maxPlayers, startTime);
+    Com_Printf("Discord: Updating %s %s %s %s %s %s %d %d %d\n", state, details, 
+                largeImageKey, largeImageText, smallImageKey, 
+                smallImageText, partySize, partyMax, startTime);
 
     DiscordRichPresence discordPresence;
     memset(&discordPresence, 0, sizeof(discordPresence));
 
-    discordPresence.state = gameStateStrings[gameState];
-    discordPresence.details = va("%s on %s", gametype, mapname);
+    discordPresence.state = state;
+    discordPresence.details = details;
     discordPresence.startTimestamp = startTime;
-    discordPresence.largeImageKey = mapname;
-    discordPresence.largeImageText = mapname;
-    discordPresence.smallImageKey = "q3";
-    discordPresence.partyId = va("server_%s", NET_AdrToStringwPort(clc.serverAddress));
-    discordPresence.partySize = 1;
-    discordPresence.partyMax = maxPlayers;
-    discordPresence.joinSecret = NET_AdrToStringwPort(clc.serverAddress);
+    discordPresence.largeImageKey = largeImageKey;
+    discordPresence.largeImageText = largeImageText;
+    discordPresence.smallImageKey = smallImageKey;
+    discordPresence.smallImageText = smallImageText;
+    discordPresence.partySize = partySize;
+    discordPresence.partyMax = partyMax;
+
+    if (partySize > 0)
+    {
+        discordPresence.partyId = va("server_%s", NET_AdrToStringwPort(clc.serverAddress));
+        discordPresence.joinSecret = NET_AdrToStringwPort(clc.serverAddress);
+    }
+
     Discord_UpdatePresence(&discordPresence);
 }
 

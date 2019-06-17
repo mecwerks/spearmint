@@ -248,6 +248,13 @@ int Sys_Milliseconds (void)
 	return sys_curtime;
 }
 
+int64_t Sys_Epoch(void)
+{
+	time_t ltime;
+	time(&ltime);
+	return ltime;
+}
+
 /*
 ================
 Sys_RandomBytes

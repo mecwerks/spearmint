@@ -176,7 +176,6 @@ typedef struct {
 // Discord stuff
 typedef enum {
     GS_MENU,
-	GS_LOADING,
     GS_SINGLEPLAYER,
     GS_MULTIPLAYER
 } gamestateDiscord_t;
@@ -428,10 +427,8 @@ typedef enum {
 */
 
 	// Discord stuff
-	CG_DISCORD_INIT = 900,
-	CG_DISCORD_UPDATE,
-	CG_DISCORD_CLEAR,
-	CG_DISCORD_SHUTDOWN
+	CG_DISCORD_UPDATE = 900,
+	CG_DISCORD_CLEAR
 } cgameImport_t;
 
 
