@@ -4,7 +4,7 @@
 
 static void handleDiscordReady(const DiscordUser *connectedUser)
 {
-    Com_Printf("Discord: connected to user %s#%s - %s\n",
+    Com_DPrintf("Discord: connected to user %s#%s - %s\n",
            connectedUser->username,
            connectedUser->discriminator,
            connectedUser->userId);
@@ -12,7 +12,7 @@ static void handleDiscordReady(const DiscordUser *connectedUser)
 
 static void handleDiscordDisconnected(int errcode, const char* message)
 {
-    Com_Printf("Discord: disconnected (%d: %s)\n", errcode, message);
+    Com_DPrintf("Discord: disconnected (%d: %s)\n", errcode, message);
 }
 
 static void handleDiscordError(int errcode, const char* message)
@@ -22,18 +22,18 @@ static void handleDiscordError(int errcode, const char* message)
 
 static void handleDiscordJoin(const char* secret)
 {
-    Com_Printf("Discord: join (%s)\n", secret);
+    Com_DPrintf("Discord: join (%s)\n", secret);
     Cbuf_ExecuteTextSafe(EXEC_APPEND, va("connect %s", secret));
 }
 
 static void handleDiscordSpectate(const char* secret)
 {
-    Com_Printf("Discord: spectate (%s)\n", secret);
+    Com_DPrintf("Discord: spectate (%s)\n", secret);
 }
 
 static void handleDiscordJoinRequest(const DiscordUser* request)
 {    
-    Com_Printf("Discord: join request from %s#%s - %s\n",
+    Com_DPrintf("Discord: join request from %s#%s - %s\n",
            request->username,
            request->discriminator,
            request->userId);
@@ -47,7 +47,7 @@ int64_t startTime = 0;
 
 void CL_DiscordInit(void)
 {
-    Com_Printf("Discord: Initializing\n");
+    Com_DPrintf("Discord: Initializing\n");
     DiscordEventHandlers handlers;
     memset(&handlers, 0, sizeof(handlers));
     handlers.ready = handleDiscordReady;
@@ -67,7 +67,7 @@ void CL_DiscordUpdatePresence(const char *state, const char *details, const char
     if (running == 0)
         return;
 
-    Com_Printf("Discord: Updating %s %s %s %s %s %s %d %d %d\n", state, details, 
+    Com_DPrintf("Discord: Updating %s %s %s %s %s %s %d %d %d\n", state, details, 
                 largeImageKey, largeImageText, smallImageKey, 
                 smallImageText, partySize, partyMax, startTime);
 
@@ -98,7 +98,7 @@ void CL_DiscordClearPresence(void)
     if (running == 0)
         return;
 
-    Com_Printf("Discord: Clearing\n");
+    Com_DPrintf("Discord: Clearing\n");
 
     Discord_ClearPresence();
 }
@@ -108,7 +108,7 @@ void CL_DiscordShutdown(void)
     if (running == 0)
         return;
 
-    Com_Printf("Discord: Shuting down\n");
+    Com_DPrintf("Discord: Shuting down\n");
 
     running = 0;
     Discord_Shutdown();
